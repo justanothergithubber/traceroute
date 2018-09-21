@@ -12,9 +12,9 @@ import os
 import re
 import signal
 import sys
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
 from subprocess import Popen, PIPE
+import traceback
 
 USER_AGENT = "traceroute/1.0 (+https://github.com/ayeowch/traceroute)"
 
@@ -207,19 +207,20 @@ class Traceroute(object):
         Fetches webpage.
         """
         status_code = 200
-        request = urllib2.Request(url=url)
+        request = urllib.request.Request(url=url)
         request.add_header('User-Agent', USER_AGENT)
         if context:
-            data = urllib.urlencode(context)
-            request.add_data(data)
+            data = urllib.parse.urlencode(context)
+            data = data.encode()
+            request.data = data
         content = ""
         try:
-            response = urllib2.urlopen(request)
+            response = urllib.request.urlopen(request)
             self.print_debug("url={}".format(response.geturl()))
             content = self.chunked_read(response)
-        except urllib2.HTTPError as err:
+        except urllib.error.HTTPError as err:
             status_code = err.code
-        except urllib2.URLError:
+        except urllib.error.URLError:
             pass
         return (status_code, content)
 
@@ -228,7 +229,7 @@ class Traceroute(object):
         Fetches response in chunks. A signal handler is attached to abort
         reading after set timeout.
         """
-        content = ""
+        content = b""
         max_bytes = 1 * 1024 * 1024  # Max. page size = 1MB
         read_bytes = 0
         bytes_per_read = 64  # Chunk size = 64 bytes
