@@ -14,7 +14,6 @@ import signal
 import sys
 import urllib.request, urllib.parse, urllib.error
 from subprocess import Popen, PIPE
-import traceback
 
 USER_AGENT = "traceroute/1.0 (+https://github.com/ayeowch/traceroute)"
 
