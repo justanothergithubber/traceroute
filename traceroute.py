@@ -57,8 +57,10 @@ class Traceroute(object):
                 status_code, traceroute = self.get_traceroute_output()
             if status_code != 0 and status_code != 200:
                 return {'error': status_code}
-            open(filepath, "w").write(traceroute)
-        traceroute = open(filepath, "r").read()
+            with open(filepath, "w") as f:
+                f.write(traceroute)
+        with open(filepath, "r") as f:
+            traceroute = f.read()
 
         # hop_num, hosts
         hops = self.get_hops(traceroute)
