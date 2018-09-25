@@ -193,6 +193,7 @@ class Traceroute(object):
             signal.signal(signal.SIGALRM, self.signal_handler)
             signal.alarm(self.timeout)
             stdout, stderr = process.communicate()
+            stdout = stdout.decode()
             returncode = process.returncode
             self.print_debug("cmd={}, returncode={}".format(cmd, returncode))
             if returncode != 0:
