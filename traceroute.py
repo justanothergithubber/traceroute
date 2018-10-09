@@ -84,7 +84,10 @@ class Traceroute(object):
         else:
             context = None
         status_code, content = self.urlopen(url, context=context)
-        content = content.decode()
+        try: # expecting Bytes
+            content = content.decode()
+        except AttributeError: # but if str, do nothing
+            pass
         content = content.strip()
         regex = r'<pre.*?>(?P<traceroute>.*?)</pre>'
         pattern = re.compile(regex, re.DOTALL | re.IGNORECASE)
